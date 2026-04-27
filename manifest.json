@@ -1,0 +1,12 @@
+{
+	"name": "RedTide",
+	"version_number": "0.0.1",
+	"author": "BeeboGreebo",
+	"website_url": "",
+	"description": "The Red Plane Hungers.",
+	"dependencies": [
+		"ReturnsAPI-ReturnsAPI-0.1.28",
+		"ReturnOfModding-ReturnOfModding-1.1.10",
+		"LuaENVY-ENVY-1.2.0"
+	]
+}
