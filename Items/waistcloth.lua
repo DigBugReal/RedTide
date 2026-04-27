@@ -22,4 +22,14 @@ Callback.add(Callback.ON_SKILL_ACTIVATE, function(actor, slot)
     if stack <= 0 then return end
 	
     actor:buff_apply(undyBuff, 60 * 5)
+	local x, y, team = actor.x, actor.y, actor.team
+    
+    -- Apply to all nearby allies
+    local actors = Instance.find_all(gm.constants.pActor)
+    for _, a in ipairs(actors) do
+        if  a.team == team
+        and math.distance(a.x, a.y, x, y) <= max_range then
+            a:buff_apply(undyBuff, 60 * 5)
+        end
+    end
 end)
