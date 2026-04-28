@@ -45,18 +45,6 @@ function rt_create_monster_log(identifier)
     return monster_log
 end
 
--- ELITES
-function rt_create_elite(identifier)
-	-- check if monster_log already exists
-	local elite = Elite.find(identifier)
-    if elite then return elite end
-
-    -- create monster_log
-    elite = Elite.wrap(gm.elite_type_create("rt", identifier))
-
-    return elite
-end
-
 -- END OF TEMPORARY RETURNS API UNFINISHED THINGS --
 
 -- play animation and then fade it out object
