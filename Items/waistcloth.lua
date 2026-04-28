@@ -4,7 +4,7 @@ local undyBuff = Buff.new("clothBuff")
 undyBuff.icon_sprite = gm.constants.sEfWarbanner
 
 local undy = Item.new("oversizedWaistcloth")
-undy:set_sprite(gm.constants.sBanner)
+undy:set_sprite(gm.constants.sWarbanner)
 undy:set_tier(ItemTier.BOSS)
 
 RecalculateStats.add(function(actor, api)
@@ -33,5 +33,3 @@ Callback.add(Callback.ON_SKILL_ACTIVATE, function(actor, slot)
         end
     end
 end)
-
---I SAID- I SAID HELLO DOWN THERE

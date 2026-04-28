@@ -1,8 +1,10 @@
 -- TEMPORARY RETURNS API UNFINISHED THINGS --
 -- basically lifted from rmt since returns api doesnt have them yet, once rapi adds them delete all this shit and use that instead
 
+--stolen from ssr bc im evil   -dig
+
 -- MONSTER LOGS
-function ssr_set_monster_log_boss(self, is_boss)
+function rt_set_monster_log_boss(self, is_boss)
 	if type(is_boss) ~= "boolean" then log.error("is_boss should be a boolean, got a "..type(is_boss), 2) return end
 
 	if is_boss then
@@ -27,30 +29,30 @@ function ssr_set_monster_log_boss(self, is_boss)
 	monster_log_order:insert(pos - 1, self)
 end
 
-function ssr_create_monster_log(identifier)
+function rt_create_monster_log(identifier)
 	-- check if monster_log already exists
 	local monster_log = MonsterLog.find(identifier)
     if monster_log then return monster_log end
 
     -- create monster_log
-    monster_log = MonsterLog.wrap(gm.monster_log_create("ssr", identifier))
+    monster_log = MonsterLog.wrap(gm.monster_log_create("rt", identifier))
 
     monster_log.sprite_id = gm.constants.sLizardWalk
     monster_log.portrait_id = gm.constants.sPortrait
 	
-	ssr_set_monster_log_boss(monster_log, false)
+	rt_set_monster_log_boss(monster_log, false)
 
     return monster_log
 end
 
 -- ELITES
-function ssr_create_elite(identifier)
+function rt_create_elite(identifier)
 	-- check if monster_log already exists
 	local elite = Elite.find(identifier)
     if elite then return elite end
 
     -- create monster_log
-    elite = Elite.wrap(gm.elite_type_create("ssr", identifier))
+    elite = Elite.wrap(gm.elite_type_create("rt", identifier))
 
     return elite
 end
@@ -58,13 +60,13 @@ end
 -- END OF TEMPORARY RETURNS API UNFINISHED THINGS --
 
 -- play animation and then fade it out object
-local SSREfFadeout = Object.new("SSREfFadeout")
+local rtEfFadeout = Object.new("rtEfFadeout")
 
-Callback.add(SSREfFadeout.on_create, function(self)
+Callback.add(rtEfFadeout.on_create, function(self)
 	self.fadeout_rate = 0.2
 end)
 
-Callback.add(SSREfFadeout.on_step, function(self)
+Callback.add(rtEfFadeout.on_step, function(self)
 	if self.image_index + self.image_speed >= gm.sprite_get_number(self.sprite_index) then
 		self.image_speed = 0
 	end
@@ -77,8 +79,8 @@ Callback.add(SSREfFadeout.on_step, function(self)
 	end
 end)
 
-function ssr_create_fadeout(x, y, xscale, sprite, animation_speed, rate)
-	local fadeout = Object.find("SSREfFadeout"):create(x, y)
+function rt_create_fadeout(x, y, xscale, sprite, animation_speed, rate)
+	local fadeout = Object.find("rtEfFadeout"):create(x, y)
 	fadeout.image_xscale = xscale
 	fadeout.sprite_index = sprite
 	fadeout.image_speed = animation_speed
@@ -109,7 +111,7 @@ Callback.add(obj_sprite_layer.on_draw, function(inst)
 end)
 
 -- math.approach from rorml
-function ssr_approach(current, target, change)
+function rt_approach(current, target, change)
 	if current < target then 
 		return math.min(target, current + change)
 	elseif current > target then
@@ -118,7 +120,7 @@ function ssr_approach(current, target, change)
 end
 
 -- check if a point is colliding with the stage
-function ssr_is_point_colliding_stage(x, y, actor)
+function rt_is_point_colliding_stage(x, y, actor)
 	local collision = actor:collision_point(x, y, gm.constants.pBlock, false, true)
 	
 	if not collision or (type(collision) == "number" and collision < 0) then
@@ -129,13 +131,13 @@ function ssr_is_point_colliding_stage(x, y, actor)
 end
 
 -- check if an instance is colliding with the stage
-function ssr_is_colliding_stage(inst, x, y)
+function rt_is_colliding_stage(inst, x, y)
 	return inst:is_colliding(gm.constants.pBlock, x or inst.x, y or inst.y)
 end
 
 -- move a point in a specified direction until it collides with the stage, or has reached the max amount
 -- 90 is down, 270 up, 180 left, and 0/360 right
-function ssr_move_point_contact_solid(x, y, angle, amount, actor)
+function rt_move_point_contact_solid(x, y, angle, amount, actor)
 	amount = amount or 1000
 	
 	local totalMoved = 0
@@ -154,11 +156,11 @@ function ssr_move_point_contact_solid(x, y, angle, amount, actor)
 			break
 		end
 		
-		if ssr_is_point_colliding_stage(x, y, actor) then
+		if rt_is_point_colliding_stage(x, y, actor) then
 			for i = 0, 31 do
 				x = x - xx
 				y = y - yy
-				if not ssr_is_point_colliding_stage(x, y, actor) then
+				if not rt_is_point_colliding_stage(x, y, actor) then
 					break
 				end
 			end
@@ -171,7 +173,7 @@ end
 
 -- move a point in a specified direction until it stops colliding with the stage, or has reached the max amount
 -- 90 is down, 270 up, 180 left, and 0/360 right
-function ssr_move_point_contact_air(x, y, angle, amount, actor)
+function rt_move_point_contact_air(x, y, angle, amount, actor)
 	amount = amount or 1000
 	
 	local totalMoved = 0
@@ -190,12 +192,12 @@ function ssr_move_point_contact_air(x, y, angle, amount, actor)
 			break
 		end
 		
-		if not ssr_is_point_colliding_stage(x, y, actor) then
+		if not rt_is_point_colliding_stage(x, y, actor) then
 			for i = 0, 31 do
 				x = x - xx
 				y = y - yy
 				
-				if ssr_is_point_colliding_stage(x, y, actor) then
+				if rt_is_point_colliding_stage(x, y, actor) then
 					x = x + xx
 					y = y + yy
 					break
@@ -210,7 +212,7 @@ end
 
 -- move an instance in a specified direction until it collides with the stage, or has reached the max amount
 -- 90 is down, 270 up, 180 left, and 0/360 right
-function ssr_move_contact_solid(inst, angle, amount)
+function rt_move_contact_solid(inst, angle, amount)
 	amount = amount or 1000
 	
 	local totalMoved = 0
@@ -228,12 +230,12 @@ function ssr_move_contact_solid(inst, angle, amount)
 			inst.y = inst.y - yy * (totalMoved - amount)
 		end
 		
-		if ssr_is_colliding_stage(inst) then
+		if rt_is_colliding_stage(inst) then
 			for i = 0, 31 do
 				inst.x = inst.x - xx
 				inst.y = inst.y - yy
 				
-				if not ssr_is_colliding_stage(inst) then
+				if not rt_is_colliding_stage(inst) then
 					break
 				end
 			end
@@ -246,7 +248,7 @@ end
 
 -- move an instance in a specified direction until it stops colliding with the stage, or has reached the max amount
 -- 90 is down, 270 up, 180 left, and 0/360 right
-function ssr_move_contact_air(inst, angle, amount)
+function rt_move_contact_air(inst, angle, amount)
 	amount = amount or 1000
 	
 	local totalMoved = 0
@@ -264,12 +266,12 @@ function ssr_move_contact_air(inst, angle, amount)
 			inst.y = inst.y - yy * (totalMoved - amount)
 		end
 		
-		if not ssr_is_colliding_stage(inst) then
+		if not rt_is_colliding_stage(inst) then
 			for i = 0, 31 do
 				inst.x = inst.x - xx
 				inst.y = inst.y - yy
 				
-				if ssr_is_colliding_stage(inst) then
+				if rt_is_colliding_stage(inst) then
 					inst.x = inst.x + xx
 					inst.y = inst.y + yy
 					break
@@ -283,12 +285,12 @@ function ssr_move_contact_air(inst, angle, amount)
 end
 
 -- kinda useless but whatever... feels better anyways
-function ssr_get_tiles(x)
+function rt_get_tiles(x)
 	return (x or 1) * 32
 end
 
 -- sets the achievement to the survivors category, locks the survivor behind it, and sets the sprites and unlock text ("X" unlocked.)
-function ssr_set_survivor_achievement(achievement, survivor)
+function rt_set_survivor_achievement(achievement, survivor)
 	achievement.group = Achievement.GROUP.character
 	achievement.token_unlock_name = survivor.token_name
 	achievement:set_sprite(survivor.sprite_portrait, 0)
@@ -296,18 +298,18 @@ function ssr_set_survivor_achievement(achievement, survivor)
 end
 
 -- adds X to the achievement's progress (achievement completes when progress reaches the requirement)
-function ssr_progress_achievement(achievement, value)
+function rt_progress_achievement(achievement, value)
 	gm.achievement_add_progress(achievement.value, value)
 end
 
 -- makes the attack not proc the damage number yellow
-function ssr_set_no_proc(attack_info)
+function rt_set_no_proc(attack_info)
 	attack_info.proc = false
 	attack_info.damage_color = Color.from_hex(0xC9B736)
 end
 
 -- return true if there is no collision between the first set of coordinates and the second one
-function ssr_line_of_sight(inst, x1, y1, x2, y2, edges)
+function rt_line_of_sight(inst, x1, y1, x2, y2, edges)
 	local list = List.new()
 	
 	inst:collision_line_list(x1, y1, x2, y2, gm.constants.pBlock, false, true, list, false)
@@ -326,7 +328,7 @@ function ssr_line_of_sight(inst, x1, y1, x2, y2, edges)
 	return flag
 end
 
-function ssr_instance_line_of_sight(inst, inst2)
+function rt_instance_line_of_sight(inst, inst2)
 	local list = List.new()
 	local flag = false
 	
@@ -363,7 +365,7 @@ function ssr_instance_line_of_sight(inst, inst2)
 	return flag
 end
 
-function ssr_is_near_ground(inst, x, y, radius)
+function rt_is_near_ground(inst, x, y, radius)
 	local flag = false
 	for _, block in ipairs(inst:get_collisions_circle(gm.constants.oB, radius, x, y)) do
 		if block then
@@ -375,7 +377,7 @@ function ssr_is_near_ground(inst, x, y, radius)
 	return flag
 end
 
-function ssr_table_shuffle(tabl)
+function rt_table_shuffle(tabl)
 	for i = #tabl, 2, -1 do
 		local j = math.random(i)
 		tabl[i], tabl[j] = tabl[j], tabl[i]
@@ -383,6 +385,3 @@ function ssr_table_shuffle(tabl)
   
 	return tabl
 end
-
--- easy shortcut for checking if chirrsmas is active
-ssr_chirrsmas_active = ((tonumber(os.date("%m")) == 12 and tonumber(os.date("%d")) >= 15) or (tonumber(os.date("%m")) == 1 and tonumber(os.date("%d")) <= 15) or Settings.chirrsmas == 1)

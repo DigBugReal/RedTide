@@ -20,7 +20,6 @@ local init = function()
 		"Items",
 		"Equipments",
 		"Interactables",
-		"Artifacts",
 		"Stages"
 	}
 	
