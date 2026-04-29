@@ -7,6 +7,7 @@
 	"dependencies": [
 		"ReturnsAPI-ReturnsAPI-0.1.28",
 		"ReturnOfModding-ReturnOfModding-1.1.10",
+		"Klehrik-Better_Crates-1.1.1",
 		"LuaENVY-ENVY-1.2.0"
 	]
 }

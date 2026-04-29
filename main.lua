@@ -9,6 +9,11 @@ mods["ReturnsAPI-ReturnsAPI"].auto{
 PATH = _ENV["!plugins_mod_folder_path"].."/"
 
 local init = function()
+	--item tiers
+	local conj = ItemTier.new("conjoined")
+	conj.text_color          = "r"
+    conj.pickup_color        = Color.MAROON
+    conj.pickup_color_bright = Color.RED
 	
 	local folders = {
 		"Misc", -- contains utility functions that other code depends on, so load first
