@@ -47,6 +47,11 @@ end
 
 -- END OF TEMPORARY RETURNS API UNFINISHED THINGS --
 
+-- item sprite drawing, taken from PrintNScrap Helper.lua
+function rt_draw_item_sprite(sprite, x, y, scale, alpha)
+    gm.draw_sprite_ext(sprite, 0, x, y, scale or 1, scale or 1, 0, Color.WHITE, alpha or 1)
+end
+
 -- play animation and then fade it out object
 local rtEfFadeout = Object.new("rtEfFadeout")
 

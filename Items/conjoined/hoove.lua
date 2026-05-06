@@ -8,6 +8,7 @@ hooveBuff.show_icon = true
 local hoove = Item.new("paulsNewHoove")
 hoove:set_sprite(gm.constants.sHoof)
 hoove:set_tier(ItemTier.find("conjoined"))
+ItemLog.new_from_item(hoove)
 
 RecalculateStats.add(function(actor, api)
 	local stack = actor:buff_count(hooveBuff)

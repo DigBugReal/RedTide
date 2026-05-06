@@ -12,8 +12,8 @@ local init = function()
 	--item tiers
 	local conj = ItemTier.new("conjoined")
 	conj.text_color          = "r"
-    conj.pickup_color        = Color.MAROON
-    conj.pickup_color_bright = Color.RED
+    conj.pickup_color        = Color.from_hex(0xda245F)
+    conj.pickup_color_bright = Color.from_hex(0x502248)
 	
 	local folders = {
 		"Misc", -- contains utility functions that other code depends on, so load first

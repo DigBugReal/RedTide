@@ -4,8 +4,9 @@ local undyBuff = Buff.new("clothBuff")
 undyBuff.icon_sprite = gm.constants.sEfWarbanner
 
 local undy = Item.new("oversizedWaistcloth")
-undy:set_sprite(gm.constants.sBanner)
+undy:set_sprite(gm.constants.sWarbanner)
 undy:set_tier(ItemTier.BOSS)
+ItemLog.new_from_item(undy)
 
 RecalculateStats.add(function(actor, api)
 	local stack = actor:buff_count(undyBuff)
