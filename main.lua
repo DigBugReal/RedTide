@@ -14,6 +14,7 @@ local init = function()
 	conj.text_color          = "r"
     conj.pickup_color        = Color.from_hex(0xda245F)
     conj.pickup_color_bright = Color.from_hex(0x502248)
+	conj:set_head_shape{{0, 20}, {130, -10}, {130, 10}, {0, -20}}
 	
 	local folders = {
 		"Misc", -- contains utility functions that other code depends on, so load first
