@@ -24,6 +24,13 @@ Callback.add(hooveBuff.on_step, function(actor)
 	end
 end)
 
+hooveBuff.effect_display = EffectDisplay.func(function(actor_unwrapped)
+	local actor = Instance.wrap(actor_unwrapped)
+	
+	rt_do_afterimages(actor, Color.ORANGE, 0.5)
+	
+end, EffectDisplay.DrawPriority.BODY_POST)
+
 Callback.add(Callback.ON_PLAYER_STEP, function(actor)
 
 	local stack = actor:item_count(hoove)

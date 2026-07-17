@@ -9,11 +9,15 @@ mods["ReturnsAPI-ReturnsAPI"].auto{
 PATH = _ENV["!plugins_mod_folder_path"].."/"
 
 local init = function()
+	--colors !!
+	Color.CRIMSON = Color.from_hex(0xda245F)
+	Color.THISTLE = Color.from_hex(0x502248)
+	
 	--item tiers
 	local conj = ItemTier.new("conjoined")
 	conj.text_color          = "r"
-    conj.pickup_color        = Color.from_hex(0xda245F)
-    conj.pickup_color_bright = Color.from_hex(0x502248)
+    conj.pickup_color        = Color.CRIMSON
+    conj.pickup_color_bright = Color.THISTLE
 	conj:set_head_shape{{0, 20}, {130, -10}, {130, 10}, {0, -20}}
 	
 	local folders = {

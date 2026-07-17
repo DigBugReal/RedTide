@@ -277,6 +277,19 @@ function rt_move_contact_air(inst, angle, amount)
 	return x, y
 end
 
+function rt_do_afterimages(inst, colore, basealpha)
+
+	local xs = inst.image_xscale + (gm.random(0.5) - 0.25)
+	local ys = inst.image_yscale + gm.random(0.2)
+	gm.gpu_set_blendmode(1)
+	local al = inst.image_alpha * (basealpha + (gm.sin(Global._current_frame * 0.05) * 0.003))
+	gm.gpu_set_fog(1, colore, 0, 0)
+	GM.draw_sprite_ext(inst.sprite_index, inst.image_index, inst.x + gm.random_range(-1,1), inst.y, xs, ys, inst.image_angle, colore, al)
+	gm.gpu_set_fog(0, Color.BLACK, 0, 0)
+	gm.gpu_set_blendmode(0)
+
+end
+
 -- kinda useless but whatever... feels better anyways
 function rt_get_tiles(x)
 	return (x or 1) * 32
