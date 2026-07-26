@@ -277,6 +277,7 @@ function rt_move_contact_air(inst, angle, amount)
 	return x, y
 end
 
+--Syringe-esque afterimages display
 function rt_do_afterimages(inst, colore, basealpha)
 
 	local xs = inst.image_xscale + (gm.random(0.5) - 0.25)
@@ -288,6 +289,29 @@ function rt_do_afterimages(inst, colore, basealpha)
 	gm.gpu_set_fog(0, Color.BLACK, 0, 0)
 	gm.gpu_set_blendmode(0)
 
+end
+
+function rt_red_mark_create(inst, x, y, countMin, countMax, countNoRandom, flip)
+	local countFinal = math.random(countMin, countMax)
+	local coinXScale = flip
+	if flip <= -2 then
+		coinXScale = gm.choose(-1,1)
+	end
+	if countNoRandom ~= 0 then
+		countFinal = countNoRandom
+	end
+	for i = 1, countFinal do
+		local coin = Object.find("EfGold"):create(inst.x, inst.y - 50)
+		coin.hspeed = coinXScale - ((coinXScale * -1) * math.random())
+		coin.vspeed = math.random() * -0.8
+		coin.gravity = 0
+		coin.sprite_index = Sprite.find("redMarkHud", namespace)
+		coin.value.value = 0
+		coin.is_mark = true
+		coin.target = gm.player_util_nearest_player(coin.x, coin.y, true)
+		coin.pickup_timer = 90
+		coin:sound_play(gm.constants.wRevive, 0.7, 8 + (math.random() * 0.6))
+	end
 end
 
 -- kinda useless but whatever... feels better anyways

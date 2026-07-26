@@ -68,14 +68,19 @@ RecalculateStats.add(Callback.Priority.AFTER, function(actor, api)
 	local stack = actor:item_count(conjOrb)
     if stack <= 0 then return end
 	actor.threshBreak = 1
-	api.maxhp_mult(4)
+	api.maxhp_mult(3)
 end)
 
 RecalculateStats.add(Callback.Priority.AFTER, function(actor, api)
 	local stack = actor:item_count(splitOrb)
     if stack <= 0 then return end
 	
-	api.maxhp_mult(0.40)
+	local cs = mods["LordVGames-ClassicScaling"]
+	if cs and cs.settings.classicEliteStats then
+		api.maxhp_mult(0.55)
+	else
+		api.maxhp_mult(0.65)
+	end
 	api.damage_mult(0.7)
 end)
 
@@ -84,9 +89,11 @@ Callback.add(Callback.ON_DEATH, function(actor)
 	local clorne = Object.wrap(actor.object_index)
 	local clorne1 = clorne:create(actor.x - 10, actor.y)
 	GM.elite_set(clorne1, split)
+	GM.actor_activity_set(clorne1, 0)
 	local clorne2 = clorne:create(actor.x + 10, actor.y)
 	clorne2.image_xscale = clorne2.image_xscale * -1
 	GM.elite_set(clorne2, split2)
+	GM.actor_activity_set(clorne2, 0)
 end)
 
 Callback.add(Callback.ON_STEP, function()

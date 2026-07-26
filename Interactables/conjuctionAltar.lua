@@ -1,42 +1,63 @@
---taken mostly from scrapper.lua
---still wip
-
 local obj = Object.new("conjunction", Object.Parent.INTERACTABLE_CRATE)
 obj:set_sprite(gm.constants.sShrine6)
 obj:set_depth(1)
 
 local animation_held_time   = 80
 local animation_print_time  = 38
-local left_x_offset         = -50   -- Location of the hole of the scrapper relative to the origin
-local right_x_offset         = 50   -- Location of the hole of the scrapper relative to the origin
+local left_x_offset         = -50
+local right_x_offset         = 50
 local holder_y_offset         = -60
 
+local card = InteractableCard.new("conjunction")
+card.object_id                      = obj
+card.required_tile_space            = 0
+card.spawn_with_sacrifice           = true
+card.spawn_cost                     = 85
+card.spawn_weight                   = 4
+card.default_spawn_rarity_override  = 1
+card.decrease_weight_on_spawn       = true
+
+Hook.add_pre(gm.constants.run_create, function(self, other, result, args)
+    local command = Artifact.find("command").active
+
+    for id = 0, #Class.Stage - 1 do
+        local stage = Stage.wrap(id)
+
+        if not command then
+            stage:add_interactable(card)
+        else
+            stage:remove_interactable(card)
+        end
+
+    end
+end)
 
 Hook.add_post(gm.constants.interactable_check_cost, function(self, other, result, args)
     if self:get_object_index() ~= obj.value then return end
 
     local inst_data = Instance.get_data(self)
     local actor = args[3].value
-
-    -- temp
-	local conItems = 1
-    if conItems > 0 then
-        for i = 0, conItems - 1 do
-            local item = Item.find("paulsNewHoove", "RedTide")
-			
-			return
-        end
-    end
-
-    -- If not, prevent usage
-    result.value = false
+	actor.canUseConjoined = 0
+	
+	for i, list in ipairs(CONJLIST) do
+		if actor:item_count(Item.find(list[2])) > 0 and actor:item_count(Item.find(list[3])) > 0 then
+			actor.canUseConjoined = actor.canUseConjoined + 1
+		end
+	end
+	if actor.canUseConjoined < 1 then
+		result.value = false
+	end
 end)
 
+Callback.add(obj.on_create, function(inst)
+    inst.translation_key = "interactable.conjunction"
+    inst.text = gm.translate(inst.translation_key..".text")
+end)
 
 Callback.add(obj.on_step, function(inst)
     local inst_data = Instance.get_data(inst)
     local actor = inst.activator
-
+	
     -- Set item entry location
     inst_data.left_x = inst.x + left_x_offset
 	inst_data.right_x = inst.x + right_x_offset
@@ -48,10 +69,6 @@ Callback.add(obj.on_step, function(inst)
         inst_data.populate = false
         inst_data.animation_time = 0
         inst_data.animation_items = {}
-		if not inst_data.morphinTime then
-			inst_data.taken_count = 0
-		end
-
 
     -- Initial activation (opened item picker UI)
     elseif inst.active == 1 then
@@ -60,12 +77,58 @@ Callback.add(obj.on_step, function(inst)
 
             -- Add items to contents
             local arr = Array.new()
-            local size = #actor.inventory_item_order
-            for i = 0, size - 1 do
-                local item = actor.inventory_item_order:get(i)
-                local wrapped = Item.wrap(item)
-                arr:push(wrapped.object_id)
+			local itemList = Class.ITEM
+            local size = 0
+            for i, _ in ipairs(itemList) do
+				local item = Item.wrap(i - 1)
+				if item.tier == ItemTier.find("conjoined", namespace).value then
+					size = size + 1
+				end
             end
+			
+			--i am sorry
+            for i = 0, 0 do
+			
+				for i, _ in ipairs(itemList) do
+					local item = Item.wrap(i - 1)
+					
+					if item.tier == ItemTier.find("conjoined", namespace).value then
+						
+						for j, list in ipairs(CONJLIST) do
+						
+							if list[1] == item.identifier then
+
+								for g, name in ipairs(list) do
+
+									if g ~= 1 then
+
+										if actor:item_count(Item.find(name)) > 0 then
+
+											if g == 2 then
+												actor.hasConj1 = true
+											elseif g == 3 then
+												actor.hasConj2 = true
+											end
+
+										end
+									end
+								
+								end
+							end
+							
+						end
+						if actor.hasConj1 and actor.hasConj2 then
+							arr:push(item.object_id)
+							actor.hasConj1 = nil
+							actor.hasConj2 = nil
+						end
+					end
+					
+				end
+				
+            end
+			
+			
             inst.contents = arr
         end
 
@@ -92,31 +155,52 @@ Callback.add(obj.on_step, function(inst)
 
         -- Get selected item
         local obj_id = inst.contents:get(inst.selection)
-        inst_data.taken = Item.wrap(gm.object_to_item(obj_id))
+        inst_data.sel = Item.wrap(gm.object_to_item(obj_id))
+		
+		for i, list in ipairs(CONJLIST) do
+		
+			if list[1] == inst_data.sel.identifier then
+				for g, name in ipairs(list) do
+					if g ~= 1 then
+						if actor:item_count(Item.find(name)) > 0 then
+							if g == 2 then
+								inst_data.item1 = Item.find(name)
+							elseif g == 3 then
+								inst_data.item2 = Item.find(name)
+							end
+						end
+					end
 
+				end
+			end
+	
+		end
+		
         -- Take item from inventory
-        actor:item_take(inst_data.taken, 1)
+        actor:item_take(inst_data.item1, 1)
+		actor:item_take(inst_data.item2, 1)
         
-        -- Start scrapper animation
-        for i = 1, 1 do
+        -- Start item animation
+        for i = 1, 2 do
             -- x and y are offsets from the actor's position here
+			local spriteID
+			local xPos
+			if i == 1 then
+				spriteID = inst_data.item1.sprite_id
+				xPos = ((1 - 1) * -17) + ((-0.5) * 34)
+			else
+				spriteID = inst_data.item2.sprite_id
+				xPos = ((1 - 1) * -17) + ((0.5) * 34)
+			end
             table.insert(inst_data.animation_items, {
-                sprite  = inst_data.taken.sprite_id,
-                x       = ((1 - 1) * -17) + ((i - 1) * 34),
+                sprite  = spriteID,
+                x       = xPos,
                 y       = -48,
                 scale   = 1.0
             })
         end
         inst:sound_play_at(gm.constants.wDroneRecycler_Activate, 1.0, 1.0, inst.x, inst.y)
-		inst_data.taken_count = inst_data.taken_count + 1
-		print(inst_data.taken_count)
         inst.active = 4
-
-        -- [Host]  Send sync info to clients
-        -- if Net.host then
-            -- packetUse:send_to_all(inst, inst_data.taken, inst_data.taken_count)
-        -- end
-
         
     -- Draw items above player
     elseif inst.active == 4 then
@@ -129,7 +213,6 @@ Callback.add(obj.on_step, function(inst)
             for _, item in ipairs(inst_data.animation_items) do
                 item.x = actor.x + item.x
                 item.y = actor.y + item.y
-				item.useNum = inst_data.taken_count
             end
             inst.active = 5
         end
@@ -137,20 +220,18 @@ Callback.add(obj.on_step, function(inst)
 
     -- Slide items towards hole
     elseif inst.active == 5 then
-        local item = inst_data.animation_items[1]
-		if not inst_data.morphinTime then
-			inst_data.morphinTime = true
+        local item1 = inst_data.animation_items[1]
+		
+		if math.distance(item1.x, item1.y, inst_data.left_x, inst_data.holder_y) < 1 then
+			inst_data.animation_time = 0
+			inst.active = 6
 		end
-		if inst_data.taken_count == 1 then
-			if math.distance(item.x, item.y, inst_data.left_x, inst_data.holder_y) < 1 then
-				inst_data.animation_time = 0
-				inst.active = 0
-			end
-		elseif inst_data.taken_count == 2 then
-			if math.distance(item.x, item.y, inst_data.right_x, inst_data.holder_y) < 1 then
-				inst_data.animation_time = 0
-				inst.active = 6
-			end
+		
+        local item2 = inst_data.animation_items[2]
+		
+		if math.distance(item2.x, item2.y, inst_data.right_x, inst_data.holder_y) < 1 then
+			inst_data.animation_time = 0
+			inst.active = 6
 		end
 		
 
@@ -171,14 +252,15 @@ Callback.add(obj.on_step, function(inst)
     -- Create drop(s) and reset
     elseif inst.active == 7 then
 
-		local conjoinedIt = Item.find("paulsNewHoove", "RedTide")
-        local created = conjoinedIt:create(inst_data.left_x + 50, inst_data.holder_y - 20, inst)
+        local created = inst_data.sel:create(inst_data.left_x + 50, inst_data.holder_y - 20, inst)
 
         inst.active = 0
-		inst_data.morphinTime = false
-		
+		if not inst_data.isDebug then
+			inst:destroy()
+		end
 
     end
+	-- print(inst.active)
 end)
 
 
@@ -198,14 +280,14 @@ Callback.add(obj.on_draw, function(inst)
 
 		-- Slide items towards hole
     elseif inst.active == 5 then
-        for _, item in ipairs(inst_data.animation_items) do
+        for i, item in ipairs(inst_data.animation_items) do
             rt_draw_item_sprite(item.sprite,
             item.x,
             item.y,
             math.easeout(item.scale, 3))
-			if item.useNum == 1 then
+			if i == 1 then
 				item.x = math.lerp(item.x, inst_data.left_x, 0.1)
-			elseif item.useNum == 2 then
+			else
 				item.x = math.lerp(item.x, inst_data.right_x, 0.1)
 			end
             item.y = math.lerp(item.y, inst_data.holder_y, 0.1)

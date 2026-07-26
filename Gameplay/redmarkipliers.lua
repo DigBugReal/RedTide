@@ -10,30 +10,24 @@ mark:set_sprite(hudSpr)
 
 -- end)
 
-Callback.add(Callback.ON_KILL_PROC, function(target, attacker)
-	if target:get_object_index() == Object.find("BabyDevil").value then 
-		-- local mar = mark:create(target.x, target.y - 15)
-		
-		local inst = Object.find("EfGold"):create(target.x, target.y - 50)
-		inst.hspeed = (-1 * target.image_xscale) - (target.image_xscale * (math.random()))
-		inst.inherit_angle = target.image_xscale
-		inst.vspeed = math.random() * -0.8
-		inst.gravity = 0
-		inst.sprite_index = hudSpr
-		inst.value.value = 0
-		inst.is_mark = true
-		inst.target = gm.player_util_nearest_player(inst.x, inst.y, true)
-		--set a limit for how far they can fly away
-		--make them bob in place
-		--make them ignore collision
-		--give them a collision ellipse so they can be grabbed
-	end
-end)
+-- Hook.add_pre("gml_Object_oShrine3_Step_2", function(self, other)
+		-- if self.active ~= 1 then return end
+		-- for i = 1, math.random(3, 5) do
+			-- Alarm.add(60 + (i * 2), function()
+				-- rt_red_mark_create(self, 1, 1, 1, -2)
+			-- end)
+		-- end
+-- end)
 
 Hook.add_post("gml_Object_oEfGold_Step_2", function(self, other)
 	if not self.is_mark then return end
+	if not self.target then return end
 	
-	-- print(self.value.speed)
+	-- if not self:place_meeting(self.value.x, self.value.y, gm.constants.pBlock) then
+		-- self.value.speed = self.value.speed * -2
+		-- self.value.hspeed = self.value.hspeed * -2
+	-- end
+	
 	if self.value.speed > 0 then
 		self.value.speed = self.value.speed - 0.005
 	end
@@ -48,10 +42,17 @@ Hook.add_post("gml_Object_oEfGold_Step_2", function(self, other)
 		self.value.vspeed = self.value.vspeed + (0.005 * -self.value.vspeed) * 2
 	end
 	
-	self.image_angle = self.image_angle + (math.random() * self.inherit_angle)
-	
-	if gm.point_distance(self.x, self.y, self.target.x, self.target.y) <= 60 then 
-		self:alarm_set(1, 1)
+	if self.value.hspeed ~= 0 then
+		self.image_angle = self.image_angle + (math.random() * self.value.hspeed)
+	end
+	if not self.value.pickup_timer then
+		if Math.distance(self.x, self.y, self.target.x, self.target.y) <= 60 or self.value.foundPlayer then 
+			self:alarm_set(1, 1)
+			if not self.value.foundPlayer then self.value.foundPlayer = true end
+		end
+	else
+		self.value.pickup_timer = self.value.pickup_timer - 1
+		if self.value.pickup_timer <= 0 then self.value.pickup_timer = nil end
 	end
 	
 
@@ -99,8 +100,8 @@ end)
 
 local alarm_hook = Hook.add_post("gml_Object_oEfGold_Alarm_1", function(self, other)
 	if not self.is_mark then return end
-
-	if gm.point_distance(self.x, self.y, self.target.x, self.target.y) > 60 then 
+	
+	if Math.distance(self.x, self.y, self.target.x, self.target.y) > 60 and not self.value.foundPlayer then 
 		self.value.speed = 5
 		self.value.hspeed = 0
 		self.value.vspeed = 0

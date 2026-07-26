@@ -3,7 +3,7 @@
 
 mods["ReturnsAPI-ReturnsAPI"].auto{
     namespace   = "RedTide",
-    mp          = true
+    mp          = false
 }
 
 PATH = _ENV["!plugins_mod_folder_path"].."/"
@@ -19,6 +19,11 @@ local init = function()
     conj.pickup_color        = Color.CRIMSON
     conj.pickup_color_bright = Color.THISTLE
 	conj:set_head_shape{{0, 20}, {130, -10}, {130, 10}, {0, -20}}
+	
+	CONJLIST = {} --God of the Conjoined Items. 
+	--Whenever a Conjoined Item is defined, be sure to table.insert into this table with another 3-item table that includes
+	--The CONJOINED ITEM'S IDENTIFIER FIRST, and then its two components' identifiers second and third.
+	--See cloakDagger.lua for an easy example.
 	
 	local folders = {
 		"Misc", -- contains utility functions that other code depends on, so load first
