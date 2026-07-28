@@ -10,12 +10,12 @@ local holder_y_offset         = -60
 
 local card = InteractableCard.new("conjunction")
 card.object_id                      = obj
-card.required_tile_space            = 0
+card.required_tile_space            = 1
 card.spawn_with_sacrifice           = true
-card.spawn_cost                     = 85
-card.spawn_weight                   = 4
+card.spawn_cost                     = 95
+card.spawn_weight                   = 8
 card.default_spawn_rarity_override  = 1
-card.decrease_weight_on_spawn       = true
+card.decrease_weight_on_spawn       = false
 
 Hook.add_pre(gm.constants.run_create, function(self, other, result, args)
     local command = Artifact.find("command").active
@@ -40,7 +40,7 @@ Hook.add_post(gm.constants.interactable_check_cost, function(self, other, result
 	actor.canUseConjoined = 0
 	
 	for i, list in ipairs(CONJLIST) do
-		if actor:item_count(Item.find(list[2])) > 0 and actor:item_count(Item.find(list[3])) > 0 then
+		if actor:item_count(Item.find(list[2]), Item.StackKind.NORMAL) > 0 and actor:item_count(Item.find(list[3]), Item.StackKind.NORMAL) > 0 then
 			actor.canUseConjoined = actor.canUseConjoined + 1
 		end
 	end
@@ -98,29 +98,17 @@ Callback.add(obj.on_step, function(inst)
 						
 							if list[1] == item.identifier then
 
-								for g, name in ipairs(list) do
-
-									if g ~= 1 then
-
-										if actor:item_count(Item.find(name)) > 0 then
-
-											if g == 2 then
-												actor.hasConj1 = true
-											elseif g == 3 then
-												actor.hasConj2 = true
-											end
-
-										end
-									end
-								
+								if actor:item_count(Item.find(list[2]), Item.StackKind.NORMAL) > 0 
+								and actor:item_count(Item.find(list[3]), Item.StackKind.NORMAL) > 0 then
+									actor.hasConj = true
 								end
+								
 							end
 							
 						end
-						if actor.hasConj1 and actor.hasConj2 then
+						if actor.hasConj then
 							arr:push(item.object_id)
-							actor.hasConj1 = nil
-							actor.hasConj2 = nil
+							actor.hasConj = nil
 						end
 					end
 					
@@ -160,25 +148,18 @@ Callback.add(obj.on_step, function(inst)
 		for i, list in ipairs(CONJLIST) do
 		
 			if list[1] == inst_data.sel.identifier then
-				for g, name in ipairs(list) do
-					if g ~= 1 then
-						if actor:item_count(Item.find(name)) > 0 then
-							if g == 2 then
-								inst_data.item1 = Item.find(name)
-							elseif g == 3 then
-								inst_data.item2 = Item.find(name)
-							end
-						end
-					end
-
+				if actor:item_count(Item.find(list[2]), Item.StackKind.NORMAL) > 0 
+				and actor:item_count(Item.find(list[3]), Item.StackKind.NORMAL) > 0 then
+					inst_data.item1 = Item.find(list[2])
+					inst_data.item2 = Item.find(list[3])
 				end
 			end
 	
 		end
 		
         -- Take item from inventory
-        actor:item_take(inst_data.item1, 1)
-		actor:item_take(inst_data.item2, 1)
+        actor:item_take(inst_data.item1, 1, Item.StackKind.NORMAL)
+		actor:item_take(inst_data.item2, 1, Item.StackKind.NORMAL)
         
         -- Start item animation
         for i = 1, 2 do

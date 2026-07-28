@@ -19,6 +19,7 @@ Callback.add(gust.on_create, function(self)
 	self.gravity = 0.2
 	self.vspeed = -10
 	self.hspeed = math.random(-1, 1)
+	self.image_blend = Color.AQUA
 
 end)
 
@@ -69,6 +70,9 @@ end)
 Callback.add(fount.on_create, function(self)
 	self.parent = -4
 	self.fireTimer = 5 * 60
+	self.image_speed = 0.2
+	self.image_blend = Color.AQUA
+	self.depth = 1
 end)
 
 Callback.add(fount.on_step, function(self)
@@ -104,8 +108,9 @@ Callback.add(Callback.ON_INTERACTABLE_ACTIVATE, function(interactable, actor)
 	if actor:item_count(vapor) <= 0 then return end
 	
 	local currentTp = Instance.find(gm.constants.oTeleporter) or Instance.find(gm.constants.oTeleporterEpic) or Instance.find(gm.constants.oCommand)
-
-	if interactable == currentTp and currentTp.just_activated == 0 then
+	if not currentTp then return end
+	
+	if interactable == currentTp and interactable.active == 1 then
 		local tain = fount:create(actor.x, actor.y)
 		tain.parent = actor
 	end

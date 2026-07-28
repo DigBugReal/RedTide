@@ -12,7 +12,7 @@ return {
 		},
 		cloakDagger = {
 			name = "Cloaked Dagger",
-			pickup = "Become Untouchable.",
+			pickup = "Small chance to become Untouchable.",
 			description = "<g>7%</c> <c_stack>(+7% per stack)</c> chance to <g>evade</c> incoming damage. <g>When evading damage</c>, <r>bleed nearby enemies</c> for <y>8x35% damage</c> and <b>turn invisible for 4</c> <c_stack>(+2 per stack)</c> seconds.",
 			destination = "i think i might be a <g>deergirl</c> tbh but im not sure <y>yet</c>",
 			date = "my favorite silent card is unload can you pls bring it back megacrit plsssss",
@@ -28,13 +28,13 @@ return {
 			story = "..and I command you to make me.. a DARK FOUNTAIN!!",
 			priority = "<p>Quarantine</c>"
 		},
-		moneyScraper = {
-			name = "Money Scraper",
-			pickup = "Thief!",
-			description = "Deal <y>+50% damage</c> to enemies above <y>70% health</c>. Your first hit on an enemy <y>Scrapes 25%</c> <c_stack>(+25% per stack)</c> of their <y>gold</c> and <r>permanently reduces</c> their <b>movement</c> and <y>attack speed</c> by <b>20%</c> <c_stack>(+20% per stack)</c>.",
+		ornateCuffs = {
+			name = "Ornate Cuffs",
+			pickup = "Hitting an enemy steals their gold once and slows them down repeatedly.",
+			description = "Your first hit on an enemy <y>Steals 25%</c> <c_stack>(+25% per stack, max of 75%)</c> of their <y>gold</c>. Hitting an enemy above <y>70% health</c> (<y>95% health</c> on bosses) inflicts a stacking debuff up to <y>10 times</c> that <r>permanently reduces</c> <b>movement</c> and <y>attack speed</c> by <b>6%</c> <c_stack>(+6% per stack)</c>.",
 			destination = "<g>$$$$$$$$$$$$$$$$$</c>",
 			date = "nuclea thrawne",
-			story = "note: this item is actually still unfinished bc exp and gold are tied in one variable and i cant be bothered to parse the bullshit that smart shopper does to change the gold drops rn so actually you are getting less exp by using this lmfao",
+			story = "moiney",
 			priority = "<p>Quarantine</c>"
 		},
 		fireAmp = {
