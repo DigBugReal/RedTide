@@ -1,5 +1,10 @@
+local SPRITE_PATH = path.combine(PATH, "Sprites/Interactables/conjunction")
+
+local sprite_idle			= Sprite.new("altarIdle", path.combine(SPRITE_PATH, "idle.png"), 11, 36, 39)
+sprite_idle:set_speed(2)
+
 local obj = Object.new("conjunction", Object.Parent.INTERACTABLE_CRATE)
-obj:set_sprite(gm.constants.sShrine6)
+obj:set_sprite(sprite_idle)
 obj:set_depth(1)
 
 local animation_held_time   = 80
@@ -12,8 +17,8 @@ local card = InteractableCard.new("conjunction")
 card.object_id                      = obj
 card.required_tile_space            = 1
 card.spawn_with_sacrifice           = true
-card.spawn_cost                     = 95
-card.spawn_weight                   = 8
+card.spawn_cost                     = 50
+card.spawn_weight                   = 2
 card.default_spawn_rarity_override  = 1
 card.decrease_weight_on_spawn       = false
 
@@ -180,7 +185,7 @@ Callback.add(obj.on_step, function(inst)
                 scale   = 1.0
             })
         end
-        inst:sound_play_at(gm.constants.wDroneRecycler_Activate, 1.0, 1.0, inst.x, inst.y)
+        inst:sound_play_at(gm.constants.wDivineTP_Complete, 1, 2, inst.x, inst.y)
         inst.active = 4
         
     -- Draw items above player
@@ -226,7 +231,7 @@ Callback.add(obj.on_step, function(inst)
         end
 
         if inst_data.animation_time == 6 then
-            inst:sound_play_at(gm.constants.wDroneRecycler_Recycling, 1, 1, inst.x, inst.y)
+            inst:sound_play_at(gm.constants.wMS, 4, 0.8, inst.x, inst.y)
         end
 
 
@@ -242,6 +247,13 @@ Callback.add(obj.on_step, function(inst)
 
     end
 	-- print(inst.active)
+end)
+
+Callback.add(obj.on_destroy, function(self)
+	if Global._mod_sound_isPlaying(gm.constants.wCrateSelect) > 0 then GM.audio_stop_sound(gm.constants.wCrateSelect) end
+	self:sound_play(gm.constants.wWormExplosion, 1, 1.2)
+	self:screen_shake(10)
+
 end)
 
 

@@ -1,11 +1,11 @@
 --its moeny
 
-local kroner = Item.new("ornateCuffs")
+local kroner = Item.new("goldenCuffs")
 kroner:set_sprite(gm.constants.sMoney)
 kroner:set_tier(ItemTier.find("conjoined"))
 ItemLog.new_from_item(kroner)
 
-local mBuff = Buff.new("ornateCuffsDebuff")
+local mBuff = Buff.new("goldenCuffsDebuff")
 mBuff.icon_sprite = gm.constants.sBuffs
 mBuff.icon_subimage = 1
 mBuff.max_stack = 10
@@ -15,7 +15,7 @@ mBuff.show_icon = true
 mBuff.draw_stack_number = true
 mBuff.icon_stack_subimage = false
 
-table.insert(CONJLIST, {"ornateCuffs", "prisonShackles", "smartShopper"})
+table.insert(CONJLIST, {"goldenCuffs", "prisonShackles", "smartShopper"})
 
 RecalculateStats.add(function(actor, api)
 

@@ -1,5 +1,8 @@
 --Red Marks
 local hudSpr = Sprite.new("redMarkHud", path.combine(PATH, "Sprites/UI/redMarkCounter.png"), 1, 17, 3)
+local symS = Sprite.new("redMarkSym1", path.combine(PATH, "Sprites/UI/markSymSmall.png"), 1, 17, 3)
+local symB = Sprite.new("redMarkSym2", path.combine(PATH, "Sprites/UI/markSymBig.png"), 1, 17, 3)
+local symM = Sprite.new("redMarkSym3", path.combine(PATH, "Sprites/UI/markSymMed.png"), 1, 17, 3)
 
 local mark = Object.new("redMarkPickup", Object.Parent.PICKUP_ITEM)
 mark:set_sprite(hudSpr)
@@ -116,7 +119,7 @@ Hook.add_post("gml_Object_oEfGold_Alarm_2", function(self, other)
 		GM.audio_stop_sound(gm.constants.wCoin)
 		GM.sound_play_global(gm.constants.wPickupOLD, 1, 1.5)
 		GM.sound_play_global(gm.constants.wCoin, 1, 0.7)
-		local data = Instance.get_data(self.target)
+		local data = Instance.get_data(gm._mod_game_getDirector())
 		if not data.marks then
 			data.marks = 1
 		else
@@ -141,7 +144,7 @@ end)
 
 Callback.add(Callback.ON_STAGE_START, function()
 	for _, actor in ipairs(Instance.find_all(gm.constants.oP)) do
-		local data = Instance.get_data(actor)
+		local data = Instance.get_data(gm._mod_game_getDirector())
 		if data.marks and data.marks <= 0 then 
 			data.marks = nil
 		end
@@ -150,7 +153,7 @@ Callback.add(Callback.ON_STAGE_START, function()
 end)
 
 Hook.add_pre(gm.constants["draw_hud_animation_update"], function(self, other, thing, args)
-	local Marks = Instance.get_data(gm.view_player()).marks
+	local Marks = Instance.get_data(gm._mod_game_getDirector()).marks
 	if not Marks then return end
     local x = Global.___view_l_x
     local y = Global.___view_l_y
@@ -161,4 +164,29 @@ Hook.add_pre(gm.constants["draw_hud_animation_update"], function(self, other, th
 	gm.draw_set_color(Color.WHITE)
 	gm.draw_set_font_w(Global.fntSquareNumBig)
 	gm.draw_text(x + 44, y + 65, gm.string(Marks or 0), 0)
+end)
+
+Hook.add_post(gm.constants.interactable_cache_strings, function(self, other, result, args)
+	if self.cost_type ~= "mark" then return end
+
+	self._blend = Color.CRIMSON
+	
+	self._text = gm.translate("<spr redMarkSym3 1>" .. gm.string(self.cost))
+	gm.scribble_set_starting_format("fntSquareMed", 16777215, 0)
+	self.text_cost_small = gm.scribble_cache(gm.translate("<spr redMarkSym3 1>" .. gm.string(self.cost)))
+	gm.scribble_set_starting_format("fntSquareLarge", 16777215, 0)
+	self.text_cost_large = gm.scribble_cache(gm.translate("<spr redMarkSym2 1>" .. gm.string(self.cost)))
+	self.cost_string = self._text
+	self.cost_color = self._blend
+end)
+
+Hook.add_post(gm.constants.interactable_check_cost, function(self, other, result, args)
+    if self.cost_type ~= "mark" then return end
+
+    local inst_data = Instance.get_data(self)
+    local director = gm._mod_game_getDirector()
+	
+	if not Instance.get_data(director).marks or Instance.get_data(director).marks < self.cost then
+		result.value = false
+	end
 end)

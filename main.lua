@@ -15,7 +15,9 @@ local init = function()
 	
 	--item tiers
 	local conj = ItemTier.new("conjoined")
-	conj.text_color          = "r"
+	gm.scribble_add_color("crRT", Color.CRIMSON, true)
+	gm.scribble_add_color("thRT", Color.THISTLE, true)
+	conj.text_color          = "crRT"
     conj.pickup_color        = Color.CRIMSON
     conj.pickup_color_bright = Color.THISTLE
 	conj:set_head_shape{{0, 20}, {130, -10}, {130, 10}, {0, -20}}

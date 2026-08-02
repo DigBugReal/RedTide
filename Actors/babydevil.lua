@@ -1,7 +1,16 @@
 local SPRITE_PATH = path.combine(PATH, "Sprites/Actors/babyDevil")
 local SOUND_PATH = path.combine(PATH, "Audio/Actors/babyDevil")
 
-local sprite_idle			= Sprite.new("bDevilIdle", path.combine(SPRITE_PATH, "idle.png"), 1, 8, 9)
+local sprite_idle			= Sprite.new("bDevilIdle", path.combine(SPRITE_PATH, "idle.png"), 5, 11, 8)
+sprite_idle:set_speed(0.75)
+local sprite_walk			= Sprite.new("bDevilWalk", path.combine(SPRITE_PATH, "walk.png"), 8, 10, 10)
+sprite_walk:set_speed(1.5)
+local sprite_jump1			= Sprite.new("bDevilJump1", path.combine(SPRITE_PATH, "jump.png"), 1, 9, 9)
+local sprite_peak1			= Sprite.new("bDevilPeak1", path.combine(SPRITE_PATH, "jumppeak.png"), 1, 10, 9)
+local sprite_fall1			= Sprite.new("bDevilFall1", path.combine(SPRITE_PATH, "fall.png"), 1, 9, 9)
+local sprite_jump2			= Sprite.new("bDevilJump2", path.combine(SPRITE_PATH, "jumpAlt.png"), 1, 9, 9)
+local sprite_peak2			= Sprite.new("bDevilPeak2", path.combine(SPRITE_PATH, "jumpPeakAlt.png"), 1, 8, 9)
+local sprite_fall2			= Sprite.new("bDevilFall2", path.combine(SPRITE_PATH, "fallAlt.png"), 1, 8, 9)
 local sprite_death			= Sprite.new("bDevilDie", path.combine(SPRITE_PATH, "death.png"), 2, 8, 9)
 sprite_death:set_speed(999999999) --please for the love of god just don't show the first frame when dying
 
@@ -21,10 +30,12 @@ mlog.stat_speed = 1
 Callback.add(baby.on_create, function(actor)
 	-- actor.sprite_palette = sprite_palette
 	actor.sprite_idle = sprite_idle
-	actor.sprite_walk = sprite_idle
-	actor.sprite_jump = sprite_idle
-	actor.sprite_jump_peak = sprite_idle
-	actor.sprite_fall = sprite_idle
+	actor.sprite_walk = sprite_walk
+	
+	actor.sprite_jump = sprite_jump1
+	actor.sprite_jump_peak = sprite_peak1
+	actor.sprite_fall = sprite_fall1
+	
 	actor.sprite_death = sprite_death
 	actor.sprite_ping = sprite_idle
 	actor.team = 3
@@ -93,6 +104,22 @@ Hook.add_pre("gml_Object_oShrine3_Step_2", function(self, other)
 end)
 
 Callback.add(baby.on_step, function(actor)
+
+	if actor:is_colliding(gm.constants.pBlockFloor, actor.x, actor.y) then
+		actor.y = actor.y - 1
+	end
+
+	--make it not fucking hump walls and corners like a fat stupid dumbass
+	local nextPosX = actor.x + (20 * actor.image_xscale)
+	if actor:is_colliding(gm.constants.pBlock, nextPosX, actor.y - 1) and actor.moveRight == true then
+		actor.moveRight = false
+		actor.moveLeft = true
+	elseif actor:is_colliding(gm.constants.pBlock, nextPosX, actor.y - 1) and actor.moveLeft == true then
+		actor.moveLeft = false
+		actor.moveRight = true
+	end
+
+
 	if actor.parent then
 		if actor.parent.time == 0 or not actor.parent.give_marks then
 			actor.dontDoFunnyKill = true
@@ -100,10 +127,10 @@ Callback.add(baby.on_step, function(actor)
 		end
 	end
 	actor:alarm_set(0, -1)
-	if math.random() <= 0.005 and not actor.isFleeing then
+	if math.random() <= 0.008 and not actor.isFleeing then
 		actor.isFleeing = true
 		actor.dir = math.random(1,2)
-		actor.babyWalkTimer = math.random(10, 40)
+		actor.babyWalkTimer = math.random(30, 60)
 		actor:alarm_set(0, -1) -- disable the classic enemy ai -- not perfect but it does the job
 	end
 	
@@ -115,7 +142,7 @@ Callback.add(baby.on_step, function(actor)
 	
 	if Net.client then return end
 
-	if actor.actor_state_current_id == -1 and actor.isFleeing and (actor.babyWalkTimer > 0 or not actor:is_grounded()) then
+	if actor.actor_state_current_id == -1 and actor.isFleeing and (actor.babyWalkTimer > 0 or not actor:is_grounded()) and not (actor.sprite_index == actor.sprite_walk and actor.image_index < 5) then
 		if actor.babyWalkTimer > 0 then
 			actor.babyWalkTimer = actor.babyWalkTimer - 1
 		end
@@ -129,6 +156,7 @@ Callback.add(baby.on_step, function(actor)
 			sync = true
 		end
 		
+		
 		-- if actor.target.x > actor.x then
 			-- if not Util.bool(actor.moveLeft) then sync = true end
 			-- actor.moveLeft = true
@@ -140,8 +168,18 @@ Callback.add(baby.on_step, function(actor)
 		-- end
 
 
-		if math.random() < 0.1 then
+		if math.random() < 0.05 then
+			
 			actor.moveUp = true
+			if math.random(1,2) == 1 then
+				actor.sprite_jump = sprite_jump1
+				actor.sprite_jump_peak = sprite_peak1
+				actor.sprite_fall = sprite_fall1
+			else
+				actor.sprite_jump = sprite_jump2
+				actor.sprite_jump_peak = sprite_peak2
+				actor.sprite_fall = sprite_fall2
+			end
 			sync = true
 		end
 
@@ -157,13 +195,16 @@ bowl:set_sprite(sprite_idle)
 
 Callback.add(baby.on_destroy, Callback.Priority.BEFORE, function(self)
 	if self.parent and not self.dontDoFunnyKill then
+		if not self.parent.babies_dead then
+			self.parent.babies_dead = 0
+		end
 		self.parent.babies_dead = self.parent.babies_dead + 1
 	end
 	self.image_index = 1
 	
 	if self.dontDoFunnyKill then return end
 	
-	local goSon = bowl:create(self.x, self.y - 1)
+	local goSon = bowl:create(self.x, self.y - 3)
 	local player = gm.player_util_nearest_player(self.x, self.y, true)
 	goSon.parent = player
 	goSon.image_xscale = self.image_xscale * -1
