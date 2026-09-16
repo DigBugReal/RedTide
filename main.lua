@@ -9,24 +9,28 @@ mods["ReturnsAPI-ReturnsAPI"].auto{
 PATH = _ENV["!plugins_mod_folder_path"].."/"
 
 local init = function()
-	--colors !!
+	--Conjoined Item Tier--
+	local conj = ItemTier.new("conjoined")
+	
+	--custom colors !!
 	Color.CRIMSON = Color.from_hex(0xda245F)
 	Color.THISTLE = Color.from_hex(0x502248)
 	
-	--item tiers
-	local conj = ItemTier.new("conjoined")
+	--custom TEXT colors !!!!
 	gm.scribble_add_color("crRT", Color.CRIMSON, true)
 	gm.scribble_add_color("thRT", Color.THISTLE, true)
+	
 	conj.text_color          = "crRT"
     conj.pickup_color        = Color.CRIMSON
     conj.pickup_color_bright = Color.THISTLE
 	conj:set_head_shape{{0, 20}, {130, -10}, {130, 10}, {0, -20}}
 	
 	CONJLIST = {} --God of the Conjoined Items. 
-	--Whenever a Conjoined Item is defined, be sure to table.insert into this table with another 3-item table that includes
+	--Whenever a Conjoined Item is defined, be sure to table.insert into this table with another 3-item table that includes;
 	--The CONJOINED ITEM'S IDENTIFIER FIRST, and then its two components' identifiers second and third.
-	--See cloakDagger.lua for an easy example.
+	--See Items > conjoined > cloakDagger.lua for an easy example.
 	
+	--Init The rest of the Mod--
 	local folders = {
 		"Misc", -- contains utility functions that other code depends on, so load first
 		"Gameplay",

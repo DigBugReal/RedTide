@@ -1,11 +1,11 @@
 local SPRITE_PATH = path.combine(PATH, "Sprites/Interactables/conjunction")
 
-local sprite_idle			= Sprite.new("altarIdle", path.combine(SPRITE_PATH, "idle.png"), 11, 36, 39)
-sprite_idle:set_speed(2)
+local sprite_idle			= Sprite.new("altarIdle", path.combine(SPRITE_PATH, "idle.png"), 11, 36, 55)
+-- sprite_idle:set_speed(2)
 
 local obj = Object.new("conjunction", Object.Parent.INTERACTABLE_CRATE)
 obj:set_sprite(sprite_idle)
-obj:set_depth(1)
+obj:set_depth(20)
 
 local animation_held_time   = 80
 local animation_print_time  = 38
@@ -57,6 +57,27 @@ end)
 Callback.add(obj.on_create, function(inst)
     inst.translation_key = "interactable.conjunction"
     inst.text = gm.translate(inst.translation_key..".text")
+	inst.mask_index = -1
+	rt_move_contact_solid(inst, 90, 270)
+	inst.image_speed = 0.08
+end)
+
+--cancel out that annoying-ass item spawn anim
+Hook.add_post(gm.constants.item_spawn_init, function(self, other, result, args)
+	if self:get_object_index() ~= obj.value then return end
+	self.spawned = true
+	self.flash = 0
+end)
+
+--get rid of that stinky outline
+Hook.add_pre(gm.constants.interactable_draw_self, function(self, other, result, args)
+	if self:get_object_index() ~= obj.value then return end
+	if not (self.active == 0 and self:is_colliding(gm.constants.oP, self.x, self.y)) then
+		--just make it draw itself again and it won't do all the outline stuff
+		gm.draw_sprite_ext(self.sprite_index, self.image_index, self.x, self.y, self.image_xscale, self.image_yscale, 0, self.image_blend, self.image_alpha)
+		return false
+	end
+	
 end)
 
 Callback.add(obj.on_step, function(inst)

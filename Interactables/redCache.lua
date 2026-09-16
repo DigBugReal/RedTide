@@ -28,7 +28,7 @@ Callback.add(box.on_step, function(self)
 		self.active = 2
 		self.image_speed = 0.2
 		data.open_delay = 25
-		Instance.get_data(gm._mod_game_getDirector()).marks = Instance.get_data(gm._mod_game_getDirector()).marks - data.marks_cost
+		CurrentMarks = CurrentMarks - data.marks_cost
 	elseif self.active == 2 and data.open_delay == 0 then
 		local randomConj = CONJLIST[math.random(#CONJLIST)]
 		item1 = Item.find(randomConj[2])
@@ -48,4 +48,10 @@ Callback.add(Callback.ON_STAGE_START, Callback.Priority.BEFORE, function()
 			gm._mod_game_getDirector():mapobject_spawn(box.value, 1)
 		end
 	end
+	
+	-- if Instance.count(box) >= 1 and math.random() <= 0.8 then
+		-- while Instance.count(box) == 0 and attempts < 48 do
+			-- gm._mod_game_getDirector():mapobject_spawn(box.value, 1)
+		-- end
+	-- end
 end)

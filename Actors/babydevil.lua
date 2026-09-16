@@ -12,6 +12,7 @@ local sprite_jump2			= Sprite.new("bDevilJump2", path.combine(SPRITE_PATH, "jump
 local sprite_peak2			= Sprite.new("bDevilPeak2", path.combine(SPRITE_PATH, "jumpPeakAlt.png"), 1, 8, 9)
 local sprite_fall2			= Sprite.new("bDevilFall2", path.combine(SPRITE_PATH, "fallAlt.png"), 1, 8, 9)
 local sprite_death			= Sprite.new("bDevilDie", path.combine(SPRITE_PATH, "death.png"), 2, 8, 9)
+
 sprite_death:set_speed(999999999) --please for the love of god just don't show the first frame when dying
 
 local baby = Object.new("BabyDevil", Object.Parent.ENEMY_CLASSIC)
@@ -60,6 +61,7 @@ Callback.add(baby.on_create, function(actor)
 	actor:init_actor_late()
 end)
 
+--attempt to make it targettable by other monsters. idrk where to begin. might have to figure this out later
 -- Hook.add_pre(gm.constants["actor_team_utils"], function()
 
 
@@ -91,7 +93,11 @@ Hook.add_pre("gml_Object_oShrine3_Step_2", function(self, other)
 		if self.give_marks then
 			for i = 1, math.random(3, 5) do
 				Alarm.add(0 + (i * 15), function()		if not Util.bool(Global.__run_exists) then return end
-					rt_red_mark_create(self, self.x, self.y + 20, 1, 1, 1, -2)
+					local coin = RedMark:create(self.x, self.y - 40)
+					Instance.get_data(coin).mark_value = 1
+					coin.speed = math.random(-2, 2)
+					coin.hspeed = math.random(-1,1)
+					coin.vspeed = math.random() * -0.8
 				end)
 			end
 			self.give_marks = false
@@ -109,7 +115,7 @@ Callback.add(baby.on_step, function(actor)
 		actor.y = actor.y - 1
 	end
 
-	--make it not fucking hump walls and corners like a fat stupid dumbass
+	--make it not get stuck on walls
 	local nextPosX = actor.x + (20 * actor.image_xscale)
 	if actor:is_colliding(gm.constants.pBlock, nextPosX, actor.y - 1) and actor.moveRight == true then
 		actor.moveRight = false

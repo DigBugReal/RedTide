@@ -2,7 +2,7 @@ local spritePaletteConj = Sprite.new("ElitePaletteConj", path.combine(PATH, "spr
 local conjIcon = Sprite.new("EliteIconConj", path.combine(PATH, "sprites/Elites/Conjoined/conjicon.png"), 1, 14, 8)
 
 local spritePaletteSplit = Sprite.new("ElitePaletteSplit", path.combine(PATH, "sprites/Elites/Conjoined/split.png"))
--- local splitIcon = Sprite.new("EliteIconSplit", path.combine(PATH, "sprites/Elites/Conjoined/splitIcon.png"), 2, 14, 10)
+
 local splitIcon1 = Sprite.new("EliteIconSplit", path.combine(PATH, "sprites/Elites/Conjoined/split1.png"), 1, 14, 6)
 local splitIcon2 = Sprite.new("EliteIconSplit2", path.combine(PATH, "sprites/Elites/Conjoined/split2.png"), 1, 14, 8)
 
@@ -10,8 +10,6 @@ local conje = Elite.new("conj")
 conje:set_palette(spritePaletteConj)
 conje.healthbar_icon = conjIcon
 conje.blend_col = Color.CRIMSON
-
-
 
 local split = Elite.new("split")
 split:set_palette(spritePaletteSplit)

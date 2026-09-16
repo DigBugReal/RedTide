@@ -7,14 +7,14 @@ return {
 			description = "<b>While moving,</c> <y>attack speed increases by 6%</c> <c_stack>(+6% per stack)</c> per second, up to <y>+50%</c> <c_stack>(+50% per stack)</c> attack speed. While at full charge, gain <b>+40%</c> <c_stack>(+30% per stack)</c> <b>movement speed.</c>",
 			destination = "haceploder",
 			date = "21",
-			story = "Hah! Boom, Baby",
+			story = "Hah! Boom, Baby!",
 			priority = "<crRT>Quarantine</c>"
 		},
 		cloakDagger = {
 			name = "Cloaked Dagger",
-			pickup = "Small chance to become Untouchable.",
+			pickup = "Small chance to become Untouchable and inflict bleed to enemies.",
 			description = "<g>7%</c> <c_stack>(+7% per stack)</c> chance to <g>evade</c> incoming damage. <g>When evading damage</c>, <r>bleed nearby enemies</c> for <y>8x35% damage</c> and <b>turn invisible for 4</c> <c_stack>(+2 per stack)</c> seconds.",
-			destination = "i think i might be a <g>deergirl</c> tbh but im not sure <y>yet</c>",
+			destination = "i think i might be a <g>marlowe</c>",
 			date = "my favorite silent card is unload can you pls bring it back megacrit plsssss",
 			story = "A huntress from outside the Spire. Ready to stab and poison anything in her way.",
 			priority = "<crRT>Quarantine</c>"
@@ -33,8 +33,8 @@ return {
 			pickup = "Hitting an enemy steals their gold once and slows them down repeatedly.",
 			description = "Your first hit on an enemy <y>Steals 25%</c> <c_stack>(+25% per stack, max of 75%)</c> of their <y>gold</c>. Hitting an enemy above <y>70% health</c> (<y>95% health</c> on bosses) inflicts a stacking debuff up to <y>10 times</c> that <r>permanently reduces</c> <b>movement</c> and <y>attack speed</c> by <b>6%</c> <c_stack>(+6% per stack)</c>.",
 			destination = "<g>$$$$$$$$$$$$$$$$$</c>",
-			date = "nuclea thrawne",
-			story = "moiney",
+			date = "SHUT YO MOUTH AND LOOK AT MY <g>WAD</c>.",
+			story = "L \nO \nD \nS \n\nOF \n\nE \nM \nO \nN \nE",
 			priority = "<crRT>Quarantine</c>"
 		},
 		fireAmp = {

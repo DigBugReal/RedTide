@@ -1,5 +1,5 @@
 local mark = Console.new{
-    "spawn_mark [count] [esplode]",
+    "spawn_mark [count] [val] [esplode]",
     {
         "Markiplier",
     },
@@ -15,22 +15,37 @@ local mark = Console.new{
 		
 		for i = 1, (count or 1) do
 			local inst
-			if not args[2] then
+			if not args[3] then
 				if i % 2 == 0 then i = i * -1 end
-				inst = Object.find("EfGold"):create(mx + (i * 10), my)
+				inst = RedMark:create(mx + (i * 10), my)
 				inst.hspeed = 0
 				inst.vspeed = 0
 			else
-				inst = Object.find("EfGold"):create(mx, my)
-				inst.speed = math.random() * math.random(-5, 5)
-				inst.hspeed = math.random() * math.random(-5, 5)
-				inst.vspeed = math.random() * math.random(-5, 5)
+				inst = RedMark:create(mx, my)
+				inst.speed = math.random() * (5 * gm.choose(-1,1))
+				inst.hspeed = math.random() * (5 * gm.choose(-1,1))
+				inst.vspeed = math.random() * (5 * gm.choose(-1,1))
 			end
-			inst.gravity = 0
-			inst.sprite_index = Sprite.find("redMarkHud", namespace)
-			inst.value.value = 0
-			inst.is_mark = true
+			Instance.get_data(inst).mark_value = args[2]
 			inst.target = gm.player_util_nearest_player(inst.x, inst.y, true)
+		end
+    end
+}
+
+local yum = Console.new{
+    "yumyum",
+    {
+        "Markiplier3",
+    },
+    function(args)
+        if not Util.bool(Global.__run_exists) then
+            Console.print("Not currently in a run.")
+            return
+        end
+		
+		for _, mark in ipairs(Instance.find_all(RedMark)) do
+			Instance.get_data(mark).foundPlayer = true
+		
 		end
     end
 }

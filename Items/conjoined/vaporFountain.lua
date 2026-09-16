@@ -106,12 +106,11 @@ end)
 
 Callback.add(Callback.ON_INTERACTABLE_ACTIVATE, function(interactable, actor)
 	if actor:item_count(vapor) <= 0 then return end
-	
-	local currentTp = Instance.find(gm.constants.oTeleporter) or Instance.find(gm.constants.oTeleporterEpic) or Instance.find(gm.constants.oCommand)
-	if not currentTp then return end
-	
-	if interactable == currentTp and interactable.active == 1 then
-		local tain = fount:create(actor.x, actor.y)
-		tain.parent = actor
+
+	if interactable.active == 1 then
+		if interactable:get_object_index() == gm.constants.oTeleporter or interactable:get_object_index() == gm.constants.oTeleporterEpic or interactable:get_object_index() == gm.constants.oCommand then
+			local tain = fount:create(actor.x, actor.y)
+			tain.parent = actor
+		end
 	end
 end)

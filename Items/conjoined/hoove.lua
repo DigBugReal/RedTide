@@ -17,7 +17,7 @@ RecalculateStats.add(function(actor, api)
 	local itemstack = actor:item_count(hoove)
 	if stack <= 0 then return end 
 	local data = Instance.get_data(actor)
-		if data.hoovetimer >= 495 then
+		if data.hoovetimer >= 430 then
 			if hooveBuff.icon_subimage ~= 9 then
 				hooveBuff.icon_subimage = 9
 			end
