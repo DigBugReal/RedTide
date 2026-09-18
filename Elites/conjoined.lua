@@ -84,15 +84,29 @@ end)
 
 Callback.add(Callback.ON_DEATH, function(actor)
 	if actor:item_count(conjOrb) <= 0 then return end
-	local clorne = Object.wrap(actor.object_index)
+	local clorne = Object.wrap(actor:get_object_index())
 	local clorne1 = clorne:create(actor.x - 10, actor.y)
 	GM.elite_set(clorne1, split)
 	GM.actor_activity_set(clorne1, 0)
+	clorne1.pVspeed = -8
+	clorne1.pHspeed = 2
 	local clorne2 = clorne:create(actor.x + 10, actor.y)
 	clorne2.image_xscale = clorne2.image_xscale * -1
 	GM.elite_set(clorne2, split2)
 	GM.actor_activity_set(clorne2, 0)
+	clorne2.pVspeed = -8
+	clorne1.pHspeed = -2
+	
 end)
+
+-- Callback.add(Callback.ON_DEATH, function(actor)
+	-- if actor:item_count(splitOrb) <= 0 then return end
+	-- local coin = RedMark:create(actor.x, actor.y - 6)
+	-- Instance.get_data(coin).mark_value = 1
+	-- coin.speed = math.random(-2, 2)
+	-- coin.hspeed = math.random(-1,1)
+	-- coin.vspeed = math.random() * -0.8
+-- end)
 
 Callback.add(Callback.ON_STEP, function()
 	if Net.client then return end
@@ -131,18 +145,39 @@ Callback.add(Callback.ON_HIT_PROC, function(actor, victim, hit_info)
 	
 end)
 
-local blacklist = {
-	["magmaWorm"] = true, -- your mom
-	["exploder"] = true,
-}
+--Remove Conjoined from the pool at stage start. There's gonna be other things that add them into the pool
+Callback.add(Callback.ON_STAGE_START, function()
 
--- the
-local all_monster_cards = MonsterCard.find_all()
-for i, card in ipairs(all_monster_cards) do
-	if not blacklist[card.identifier] then
-		local elite_list = List.wrap(card.elite_list)
-		if not elite_list:contains(conje) then
-			elite_list:add(conje)
+	local blacklist = {
+		["magmaWorm"] = true,
+		["betaConstruct"] = true,
+	}
+	
+	local all_monster_cards = MonsterCard.find_all()
+	for i, card in ipairs(all_monster_cards) do
+		if not blacklist[card.identifier] then
+			local elite_list = List.wrap(card.elite_list)
+			if elite_list:contains(conje) then
+				elite_list:delete_value(conje)
+			end
 		end
 	end
-end
+
+
+
+end)
+
+-- local blacklist = {
+	-- ["magmaWorm"] = true,
+	-- ["betaConstruct"] = true,
+-- }
+	
+-- local all_monster_cards = MonsterCard.find_all()
+-- for i, card in ipairs(all_monster_cards) do
+	-- if not blacklist[card.identifier] then
+		-- local elite_list = List.wrap(card.elite_list)
+		-- if not elite_list:contains(conje) then
+			-- elite_list:add(conje)
+		-- end
+	-- end
+-- end

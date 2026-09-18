@@ -212,7 +212,9 @@ Callback.add(obj.on_step, function(inst)
     -- Draw items above player
     elseif inst.active == 4 then
         -- Free actor
-        GM.actor_activity_set(actor, 0)
+		if actor.activity == 95 then
+			GM.actor_activity_set(actor, 0)
+		end
 		
         if inst_data.animation_time < animation_held_time then inst_data.animation_time = inst_data.animation_time + 1
         else

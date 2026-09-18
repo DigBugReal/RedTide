@@ -46,7 +46,7 @@ local spr_mark3 = Sprite.new("redMarkSpr3", path.combine(PATH, "Sprites/Misc/red
 		
 		local data = Instance.get_data(self)
 		data.mark_value = 0 --mark_value is to be set manually whenever a mark is made
-		data.pickup_timer = 90 --cooldown that won't allow pickup immediately on spawn
+		data.pickup_timer = 20 --cooldown that won't allow pickup immediately on spawn
 		data.pulse_timer = 61
 		data.afterimg_timer = 16
 		
@@ -122,7 +122,7 @@ local spr_mark3 = Sprite.new("redMarkSpr3", path.combine(PATH, "Sprites/Misc/red
 			self.vspeed = self.vspeed + (0.005 * -self.vspeed) * 2
 		end
 		if self.hspeed ~= 0 and not data.foundPlayer then
-			self.image_angle = self.image_angle + (math.random() * self.hspeed)
+			self.image_angle = self.image_angle + (math.random(1, 6) * self.hspeed)
 		end
 		
 		--pickup
